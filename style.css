@@ -1,0 +1,40 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    margin: 0;
+    background-color: #000;
+  }
+  
+  canvas {
+    border: 2px solid #fff;
+  }
+  
+  #control-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  #scoreboard {
+    display: flex;
+    justify-content: space-between;
+    width: 200px;
+    color: #fff;
+  }
+  
+  button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  
