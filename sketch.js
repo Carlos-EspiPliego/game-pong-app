@@ -8,9 +8,19 @@ let isPaused = false;
 let speedIncreaseInterval = 5; // Intervalo de tiempo en segundos para aumentar la velocidad
 let lastSpeedIncreaseTime = 0;
 let startButton, pauseButton, resetButton;
-let playerScoreElement, computerScoreElement;
 let playerMoveUp = false;
 let playerMoveDown = false;
+let fondo, barraJugador, barraComputadora, bola, sonidoRebote, sonidoGol;
+let gameEnded = false; // Flag to check if the game has ended
+
+function preload() {
+    fondo = loadImage('./assets/fondo1.png');
+    barraJugador = loadImage('./assets/barra1.png');
+    barraComputadora = loadImage('./assets/barra2.png');
+    bola = loadImage('./assets/bola.png');
+    sonidoRebote = loadSound('./assets/bounce.wav');
+    sonidoGol = loadSound('./assets/jingle_win_synth_02.wav');
+}
 
 function setup() {
     createCanvas(800, 400);
@@ -23,11 +33,17 @@ function setup() {
     startButton = select('#start-button');
     pauseButton = select('#pause-button');
     resetButton = select('#reset-button');
-    playerScoreElement = select('#player-score');
-    computerScoreElement = select('#computer-score');
 
     // Asignar eventos a los botones
-    startButton.mousePressed(startGame);
+    startButton.mousePressed(() => {
+        if (getAudioContext().state !== 'running') {
+            getAudioContext().resume().then(() => {
+                startGame();
+            });
+        } else {
+            startGame();
+        }
+    });
     pauseButton.mousePressed(pauseGame);
     resetButton.mousePressed(resetGame);
 
@@ -37,7 +53,7 @@ function setup() {
 }
 
 function draw() {
-    background(0);
+    background(fondo);
 
     if (isPlaying && !isPaused) {
         ball.update();
@@ -53,6 +69,7 @@ function draw() {
     computerPaddle.show();
     ball.show();
 
+    mostrarPuntaje();
     checkGameEnd();
 }
 
@@ -67,10 +84,10 @@ function increaseBallSpeedOverTime() {
 function startGame() {
     if (!isPlaying) {
         isPlaying = true;
+        gameEnded = false;
         ball.reset();
         playerScore = 0;
         computerScore = 0;
-        updateScoreboard();
     }
     isPaused = false;
 }
@@ -82,22 +99,36 @@ function pauseGame() {
 function resetGame() {
     isPlaying = false;
     isPaused = false;
+    gameEnded = false;
     ball.reset();
     playerScore = 0;
     computerScore = 0;
-    updateScoreboard();
 }
 
-function updateScoreboard() {
-    playerScoreElement.html(`Jugador: ${playerScore}`);
-    computerScoreElement.html(`Computadora: ${computerScore}`);
+function mostrarPuntaje() {
+    textSize(32);
+    textAlign(CENTER, CENTER);
+    fill(color("#2B3FD6"));
+    text(playerScore, width / 4, 30);
+    text(computerScore, 3 * width / 4, 30);
 }
 
 function checkGameEnd() {
-    if (playerScore >= 5 || computerScore >= 5) {
+    if ((playerScore >= 5 || computerScore >= 5) && !gameEnded) {
         isPlaying = false;
         ball.reset();
+        narrarMarcador(true); // Pass true to indicate the game has ended
+        gameEnded = true; // Prevent further narration after the game ends
     }
+}
+
+function narrarMarcador(gameEnded = false) {
+    let message = `El marcador es ${playerScore} a ${computerScore}`;
+    if (gameEnded) {
+        message += `. El juego ha terminado.`;
+    }
+    let narrador = new SpeechSynthesisUtterance(message);
+    window.speechSynthesis.speak(narrador);
 }
 
 function keyDownHandler(event) {
@@ -131,6 +162,7 @@ class Ball {
         this.speedMultiplier = 1;
         this.xSpeed = random([-this.baseSpeed, this.baseSpeed]);
         this.ySpeed = random(-this.baseSpeed / 2, this.baseSpeed / 2);
+        this.angle = 0;
     }
 
     increaseSpeed() {
@@ -149,18 +181,24 @@ class Ball {
 
         if (this.x < 0) {
             computerScore++;
-            updateScoreboard();
+            sonidoGol.play();
+            narrarMarcador(); // Narrate the score each time a point is scored
             this.reset();
         }
 
         if (this.x > width) {
             playerScore++;
-            updateScoreboard();
+            sonidoGol.play();
+            narrarMarcador(); // Narrate the score each time a point is scored
             this.reset();
         }
 
         this.checkPaddleCollision(playerPaddle);
         this.checkPaddleCollision(computerPaddle);
+
+        // Ajustar el ángulo de la pelota en función de su velocidad
+        let velocidadTotal = sqrt(this.xSpeed * this.xSpeed + this.ySpeed * this.ySpeed);
+        this.angle += velocidadTotal * 0.05;
     }
 
     checkPaddleCollision(paddle) {
@@ -172,12 +210,17 @@ class Ball {
         ) {
             this.xSpeed *= -1;
             this.ySpeed = random(-2, 2);
+            sonidoRebote.play();
         }
     }
 
     show() {
-        fill(255);
-        ellipse(this.x, this.y, 20, 20);
+        push();
+        translate(this.x, this.y);
+        rotate(this.angle);
+        imageMode(CENTER);
+        image(bola, 0, 0, 20, 20);
+        pop();
     }
 }
 
@@ -220,6 +263,6 @@ class Paddle {
 
     show() {
         fill(255);
-        rect(this.x, this.y, this.w, this.h);
+        image(this.isPlayer ? barraJugador : barraComputadora, this.x, this.y, this.w, this.h);
     }
 }

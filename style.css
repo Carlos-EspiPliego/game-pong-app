@@ -1,40 +1,94 @@
 body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(45deg, #1e1e1e, #3e3e3e, #000428, #004e92, #6a0572, #9d50bb, #fc00ff);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #ffffff;
     display: flex;
+    flex-direction: column;
+    gap: 2rem;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
     height: 100vh;
     margin: 0;
-    background-color: #000;
-  }
-  
-  canvas {
-    border: 2px solid #fff;
-  }
-  
-  #control-panel {
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.container {
+    text-align: center;
+}
+
+.btn-group {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  #scoreboard {
-    display: flex;
-    justify-content: space-between;
-    width: 200px;
-    color: #fff;
-  }
-  
-  button {
-    padding: 10px 20px;
-    margin: 0 5px;
-    background-color: #fff;
+    gap: 1rem;
+}
+
+.btn {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: linear-gradient(45deg, #00dbde, #fc00ff);
     border: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-  }
-  
-  button:focus {
-    outline: none;
-  }
-  
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    border-radius: 50%;
+    z-index: -1;
+    transform: translate(-50%, -50%) scale(0);
+}
+
+.btn:hover::before {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.btn:hover {
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-3px);
+}
+
+.btn:active {
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #00dbde, #00ff73);
+}
+
+.btn-warning {
+    background: linear-gradient(45deg, #ffcc00, #ff7300);
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, #ff0000, #ff7300);
+}

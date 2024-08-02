@@ -1,26 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pong Game</title>
+    <title>Juego de PONG</title>
     <!-- Incluir la biblioteca p5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
+    <!-- Incluir el archivo sketch.js -->
     <script src="sketch.js" defer></script>
+    <!-- Incluir el archivo style.css -->
     <link rel="stylesheet" href="style.css" />
   </head>
-
   <body>
     <div id="control-panel" class="container text-center mt-5">
-    <div class="btn-group" role="group" aria-label="Control Panel">
-      <button id="start-button" class="btn btn-success">Iniciar</button>
-      <button id="pause-button" class="btn btn-warning">Pausar</button>
-      <button id="reset-button" class="btn btn-danger">Resetear</button>
+      <div class="btn-group" role="group" aria-label="Control Panel">
+        <button id="start-button" class="btn btn-success">Iniciar</button>
+        <button id="pause-button" class="btn btn-warning">Pausar</button>
+        <button id="reset-button" class="btn btn-danger">Resetear</button>
+      </div>
     </div>
-    <div id="scoreboard" class="mt-3">
-      <span id="player-score" class="score text-light">Jugador: 0</span>
-      <span id="computer-score" class="score text-light">Computadora: 0</span>
-    </div>
-  </div>
   </body>
 </html>
